@@ -1,6 +1,7 @@
 import { MersenneTwister } from "./MersenneTwister.js";
 import { gachaLogic } from "./gacha.js";
 import { sortByRarity } from "./sort.js";
+import { arraySummary } from "./arraySummary.js";
 
 class MainLogic
 {
@@ -18,23 +19,28 @@ class MainLogic
   SSR: "SSR",
   UR: "UR",
   LR: "LR"
-};
-   // レアリティごとのアイテム
+  };
+   //レアリティごとのアイテム
   static itemsByRarity = {};
 }
 
+/**
+ * ガチャシステム
+ * 
+ * @param {int} count ガチャ回数
+ */
 function callMainAction(count) {
-  // 入力値（1〜6）
-  const level = parseInt(document.getElementById("rarityNum").value);
+  //入力値
+  const rarityNum = parseInt(document.getElementById("rarityNum").value);
 
-  // 入力欄から確率を取得
+  //入力欄から確率を取得
   const probabilities = [];
-  for(let i = 0; i < level; i++ ) {
+  for(let i = 0; i < rarityNum; i++ ) {
     probabilities.push(parseFloat(document.getElementById("prob"+ MainLogic.rarityTable[i]).value));
   }
     
   // 合計チェック
-  const total = probabilities.slice(0, level).reduce((a, b) => a + b, 0);
+  const total = probabilities.slice(0, rarityNum).reduce((a, b) => a + b, 0);
   if (Math.abs(parseFloat(total - 100)) > 0.01) {
     alert("合計が100%になるように設定してください！ (現在: " + parseFloat(total.toFixed(2)) + "%)");
     return;
@@ -44,44 +50,31 @@ function callMainAction(count) {
   let resultLen = gachaLogic({
     gachaCount: count,
     probabilities: probabilities,
-    rarityNum: level,
+    rarityNum: rarityNum,
     rarityTable: MainLogic.rarityTable,
     itemsByRarity: MainLogic.itemsByRarity
   });
 
-  //ソートの確認と実施
+  //レアリティソート
   const isSort = document.getElementById("sortByRarity")?.checked;
   if(isSort) {
     resultLen = sortByRarity(resultLen, MainLogic.rarityTable);
   }
 
-  //表示
+  //重複をまとめた表示
   const combine = document.getElementById("combineDuplicates").checked;
-  const tbody = document.getElementById("resultBody");
-  tbody.innerHTML = ""; 
-
-  // 重複をまとめるか否か
   if (combine) {
-    const summary = {};
+    resultLen = arraySummary(resultLen);
+  }
 
-    for (const res of resultLen) {
-      const key = `${res.rarity}：${res.item}`;
-      summary[key] = (summary[key] || 0) + 1;
-    }
-
-    for (const [key, val] of Object.entries(summary)) {
-      const [rarity, item] = key.split("：");
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${MainLogic.rarityDisplayNames[rarity]}</td><td>${item}</td><td>×${val}個</td>`;
-      tbody.appendChild(tr);
-    }
-
-  } else {
-    for (const res of resultLen) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${MainLogic.rarityDisplayNames[res.rarity]}</td><td>${res.item}</td><td>×1個</td>`;
-      tbody.appendChild(tr);
-    }
+  //表示処理
+  const tbody = document.getElementById("resultBody");
+  tbody.replaceChildren(); 
+  for (const res of resultLen) {
+    tbody.insertAdjacentHTML(
+      "beforeend",
+      `<tr><td>${MainLogic.rarityDisplayNames[res.rarity]}</td><td>${res.item}</td><td>×${res.val || 1}個</td></tr>`
+    );
   }
 }
 
@@ -90,7 +83,7 @@ function updateLabels() {
   const container = document.getElementById("table");
   container.innerHTML = "";
 
-  // --- 保存済みのレアリティ名を復元 ---
+  //保存済みのレアリティ名を復元
   const saved = JSON.parse(localStorage.getItem("rarityDisplayNames") || "{}");
   for (const [key, val] of Object.entries(saved)) {
     if (MainLogic.rarityDisplayNames[key]) {
@@ -133,12 +126,6 @@ function updateLabels() {
     const resultValue = (adjustedWeights[i] / totalWeight * 100).toFixed(2);
 
     const row = document.createElement("tr");
-
-    // ▼ 記号
-    //const tdSymbol = document.createElement("td");
-    //tdSymbol.textContent = rarity;
-    //tdSymbol.style.border = "1px solid black";
-    //tdSymbol.style.padding = "4px 8px";
 
     // ▼ 表示名入力
     const tdName = document.createElement("td");
@@ -275,19 +262,8 @@ function showLineup(level) {
     });
     
     itemCell.appendChild(input);
-
-    // ▼ 個数入力欄
-    //const countCell = document.createElement("td");
-    //const countInput = document.createElement("input");
-    //countInput.type = "number";
-    //countInput.min = 1;
-    //countInput.value = 1;
-    //countInput.style.width = "50px";
-    //countCell.appendChild(countInput);
-
     row.appendChild(rarityCell);
     row.appendChild(itemCell);
-    //row.appendChild(countCell);
     tbody.appendChild(row);
   }
 
