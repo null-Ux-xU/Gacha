@@ -3,11 +3,12 @@ import { MersenneTwister } from "./MersenneTwister.js";
 
 /**
  * ガチャを引く
- * @param {int} gachaCount - 回数(n連)
- * @param {float[]} probabilities - レアリティ毎の確率
- * @param {int} rarityNum - レアリティ個数
- * @param {string[]} rarityTable - レアリティの名前
- * @param {string[]} itemsByRarity - レアリティごとのアイテムリスト
+ * @param {Object} params パラメータ
+ * @param {int} params.gachaCount - 回数(n連)
+ * @param {float[]} params.probabilities - レアリティ毎の確率
+ * @param {int} params.rarityNum - レアリティ個数
+ * @param {string[]} params.rarityTable - レアリティの名前
+ * @param {string[]} params.itemsByRarity - レアリティごとのアイテムリスト
  * @returns {Object[]} 排出されたアイテム群[({ レアリティ, アイテム })]
  */
 export function gachaLogic({gachaCount, probabilities, rarityNum, rarityTable, itemsByRarity}) {
@@ -19,6 +20,8 @@ export function gachaLogic({gachaCount, probabilities, rarityNum, rarityTable, i
 
     //countに応じたループ(n連実装部)
     for(let i = 0; i < gachaCount; i++ ){
+        
+
         //初期化
         let rand = mt.random()*100;
         let cumulative = 0;
