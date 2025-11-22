@@ -1,7 +1,9 @@
+import {saveToIndexedDB, getUrl} from "./indexedDB.js";
+
 /**
  * 
  * @param {event} event zipファイル読み込みイベント 
- * @returns {object} {resultItems, fileNum}
+ * @returns {object} {resultItems, fileNum, zipId}
  */
 export async function importZipFile(event) {
 
@@ -51,9 +53,12 @@ export async function importZipFile(event) {
         indexCount++;
     }
 
+    await saveToIndexedDB(zipId, zipBlob);
+
     const returnParam ={
         resultItems,
         fileNum: indexCount,
+        zipId: zipId
     }
     alert("インポートが完了しました！");
 
@@ -79,4 +84,24 @@ function getMimeType(filename) {
  */
 function extractFileName(filename) {
     return filename.split("/").pop().replace(/\.[^.]+$/, "");
+}
+
+/**
+ * ZIPファイルをダウンロード
+ * @param {string} fileId
+ */
+export async function downloadZip(fileId) {
+    try{
+
+    }
+    catch (error) {
+        console.error(error);
+    }
+
+    const url = await getUrl(fileId);
+    const anchor = document.getElementById("downloadZipBtn");
+    anchor.id = "downloadZipBtn";
+    anchor.class="download-button";
+    anchor.href = url;
+    anchor.download = fileId;  
 }

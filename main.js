@@ -5,7 +5,7 @@ import { arraySummary } from "./arraySummary.js";
 import { createTableElement } from "./createTableElement.js";
 import {saveDataToLocalStorage, getDataFromLocalStorage} from "./localStrage.js";
 import {createTableHeader} from "./createTableHeader.js";
-import {importZipFile} from "./importZip.js";
+import {importZipFile, downloadZip} from "./importZip.js";
 class MainData
 {
 
@@ -34,7 +34,7 @@ class MainData
     LR: 0.5
   };
 
-  static localStorageFilesKey = new Array;
+  static filesKey = new Array;
   //------------------------
   
   //---ユーザーの操作によって自由に変更されるデータ群-----
@@ -105,6 +105,13 @@ class MainData
       const rarity = itemObj.rarity || "(no rarity)";
       msg += `  ${indexKey}: [Rarity: ${rarity}] ${name}\n`;
     }
+
+    msg += "[filesKey]\n";
+    let keyCount = 0;
+    for(const key of MainData.filesKey) {
+      msg += `${keyCount} : ${key || "none"}\n`;
+      keyCount++;
+    }
     alert(msg);
   }
 }
@@ -157,6 +164,9 @@ function callMainAction(count) {
       `<tr><td>${MainData.rarityDisplayNames[res.rarity]}</td><td>${res.item}</td><td>×${res.val || 1}個</td></tr>`
     );
   }
+  if(MainData.filesKey.length === 0) return;
+ 
+  downloadZip(MainData.filesKey[0]);
 }
 
 /**
@@ -453,6 +463,7 @@ window.addEventListener("DOMContentLoaded", () => {
     
     MainData.resultItems = returnParam.resultItems;
     MainData.itemLineupNum = returnParam.fileNum;
+    MainData.filesKey.push(returnParam.zipId);
     showLineup();
   });
 
