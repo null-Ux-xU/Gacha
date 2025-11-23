@@ -32,4 +32,3 @@ export function getDataFromLocalStorage(localStorageName) {
         return null;
     }
 }
-

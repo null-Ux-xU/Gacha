@@ -1,10 +1,30 @@
 import {saveToIndexedDB, getUrl, loadFromIndexedDB} from "./indexedDB.js";
 
+/**
+ * MIME タイプを返す
+ */
+function getMimeType(filename) {
+    if (filename.endsWith(".png")) return "image/png";
+    if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) return "image/jpeg";
+    if (filename.endsWith(".webp")) return "image/webp";
+    if (filename.endsWith(".gif")) return "image/gif";
+    if (filename.endsWith(".mp3")) return "audio/mpeg";
+    if (filename.endsWith(".wav")) return "audio/wav";
+    if (filename.endsWith(".ogg")) return "audio/ogg";
+    return "application/octet-stream";
+}
+
+/**
+ * 拡張子を除いたファイル名を返す
+ */
+function extractFileName(filename) {
+    return filename.split("/").pop().replace(/\.[^.]+$/, "");
+}
 
 async function  takeOutFileContents(file) {
 
     //対象となる拡張子
-    const allowedExtensions = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".mp3", ".wav", ".ogg"];
+    const allowedExtensions = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".mp3", ".wav", ".ogg", ".m4a", ".txt"];
     
     const zipFile = await JSZip.loadAsync(file);
     let files = Object.values(zipFile.files).filter(f => !f.dir);
@@ -67,7 +87,14 @@ export async function importZipFile(event) {
 
     const result = await takeOutFileContents(file);
     
-    await saveToIndexedDB(result.zipId, result.zipBlob);
+    await saveToIndexedDB(
+        result.zipId, 
+        result.zipBlob,
+        {
+            resultItems: result.contents.resultItems,
+            fileNum: result.contents.fileNum,
+        }
+    );
     
     alert("インポートが完了しました！");
 
@@ -78,26 +105,6 @@ export async function importZipFile(event) {
     };
 }
 
-/**
- * MIME タイプを返す
- */
-function getMimeType(filename) {
-    if (filename.endsWith(".png")) return "image/png";
-    if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) return "image/jpeg";
-    if (filename.endsWith(".webp")) return "image/webp";
-    if (filename.endsWith(".gif")) return "image/gif";
-    if (filename.endsWith(".mp3")) return "audio/mpeg";
-    if (filename.endsWith(".wav")) return "audio/wav";
-    if (filename.endsWith(".ogg")) return "audio/ogg";
-    return "application/octet-stream";
-}
-
-/**
- * 拡張子を除いたファイル名を返す
- */
-function extractFileName(filename) {
-    return filename.split("/").pop().replace(/\.[^.]+$/, "");
-}
 
 /**
  * ZIPファイルをダウンロード
@@ -119,18 +126,14 @@ export async function downloadZip(fileId) {
 
 export async function loadZip(fileKey) {
     const saved = await loadFromIndexedDB(fileKey);
-    if (!saved) {
-        throw new Error("データが見つかりません");
-    }
-    else if(!saved.blob) {
-        throw new Error("blobデータが見つかりません");
-    }
+    if(!saved || typeof saved !== "object") return;
 
     const result = await takeOutFileContents(saved.blob);
 
     return {
         resultItems: result.contents.resultItems,
         fileNum: result.contents.fileNum,
-        zipId: result.zipId
+        zipId: result.zipId,
+        blob: saved.blob
     };
 }

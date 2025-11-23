@@ -6,7 +6,7 @@ import { createTableElement } from "./createTableElement.js";
 import {saveDataToLocalStorage, getDataFromLocalStorage} from "./localStrage.js";
 import {createTableHeader} from "./createTableHeader.js";
 import {importZipFile, downloadZip, loadZip} from "./importZip.js";
-import {showAllIndexedDBData} from "./indexedDB.js";
+import {saveToIndexedDB, loadFromIndexedDB, showAllIndexedDBData} from "./indexedDB.js";
 
 class MainData
 {
@@ -32,10 +32,12 @@ class MainData
     LR: 0.5
   };
 
-  static filesKey = new Array;
+  static dataKey = new Array;
   //------------------------
   
   //---ユーザーの操作によって自由に変更されるデータ群-----
+
+  static gachaName = new Map;
 
   //レアリティ総数
   static rarityNum = 6;
@@ -67,22 +69,52 @@ class MainData
    */
   static getEditableDatas() {
     const datas = {
+      rarityNum: this.rarityNum,
+      itemLineupNum: this.itemLineupNum,
       rarityDisplayNames: this.rarityDisplayNames,
       resultItems: this.resultItems,
       editableWeights: this.editableWeights
     }
-    return datas;
+    return datas; 
   }
+
+  /**
+   * 編集可能な値の初期化
+   */
+  static initDefaultValue(){
+    this.setEditableDatas();
+  }
+
 
   /**
    * 編集可能な値全てに対して値をセットする
    * 
    * @param {Object} datas  編集可能な変数名をキーとした連想配列
    */
-  static setEditableDatas(datas) {
-    this.rarityDisplayNames = datas["rarityDisplayNames"];
-    this.resultItems = datas["resultItems"];
-    this.editableWeights = datas["editableWeights"];
+  static setEditableDatas({ 
+      rarityNum = null,
+      itemLineupNum = null,
+      rarityDisplayNames = null,
+      resultItems = null,
+      editableWeights = null 
+    } = {}) {
+    this.rarityNum = rarityNum ?? 6;
+    this.itemLineupNum = itemLineupNum ?? 5;
+    this.resultItems = structuredClone(resultItems || {});
+    this.editableWeights = structuredClone(editableWeights || {});
+    if(rarityDisplayNames) {
+      this.rarityDisplayNames = structuredClone(rarityDisplayNames);
+    }
+    else{
+      this.rarityDisplayNames = {
+        N: "N",
+        R: "R",
+        SR: "SR",
+        SSR: "SSR",
+        UR: "UR",
+        LR: "LR"
+      };
+    }
   }
 
   //デバッグ用
@@ -117,12 +149,22 @@ class MainData
       msg += `  ${indexKey}: [Rarity: ${rarity}] ${name}\n`;
     }
 
-    msg += "[filesKey]\n";
-    let keyCount = 0;
-    for(const key of MainData.filesKey) {
-      msg += `${keyCount} : ${key || "none"}\n`;
-      keyCount++;
+    msg += "[dataKey]\n";
+  
+    for(let i = 0; i < MainData.dataKey.length; i++){
+       msg += `${i} : ${MainData.dataKey[i] || "none"}\n`;
     }
+
+
+    msg += "\n";
+    msg += "[gachaName]\n";
+
+    for (const [indexKey, value] of this.gachaName) {
+      const name = value || "[\"空文字列\"]";
+      
+      msg += `  ${indexKey}: ${name}\n`;
+    }
+
     console.log(msg);
   }
 }
@@ -174,23 +216,33 @@ function callMainAction(count) {
       "beforeend",
       `<tr><td>${MainData.rarityDisplayNames[res.rarity]}</td><td>${res.item}</td><td>×${res.val || 1}個</td></tr>`
     );
+    console.log(`${res.indexNo}`);
   }
-  if(MainData.filesKey.length === 0) return;
+  if(MainData.dataKey.length === 0) return;
  
-  downloadZip(MainData.filesKey[0]);
+  downloadZip(MainData.dataKey[0]);
 }
 
-function updateLineupToZip() {
-  if(MainData.filesKey.length > 1) {
-    const importZipNameElement = document.getElementById("importZipName");
-    importZipNameElement.replaceChildren();
-    MainData.filesKey.forEach(r => {
+function updateLineupToZip(id) {
+  if(MainData.dataKey.length > 0) {
+    const stringValue = "新規データ";
+    const loadZipNameElement = document.getElementById("loadZipName");
+    loadZipNameElement.replaceChildren();
+
+    MainData.dataKey.forEach(r => {
       const option = document.createElement("option");
       option.value = r;
       option.textContent = r;
-      importZipNameElement.appendChild(option);
+      if(id === r)option.selected = true;
+      loadZipNameElement.appendChild(option);
     });
-    importZipNameElement.hidden = false;
+    const option = document.createElement("option");
+    option.value = stringValue;
+    option.textContent = stringValue;
+    if(!id) option.selected = true;
+    loadZipNameElement.appendChild(option);
+
+    loadZipNameElement.hidden = false;
   }
 }
 
@@ -386,8 +438,10 @@ function showLineup() {
 function loadMainData() {
 
   const datas = getDataFromLocalStorage("gacyaData");
-  if(datas) {
-    MainData.setEditableDatas(datas);
+  if(datas && datas.dataKey) {
+    for(let i = 0; i < datas.dataKey.length; i++) {
+      MainData.dataKey.push(datas.dataKey[i]);
+    }
   }
   else {
     console.log("localdataが存在しない");
@@ -398,8 +452,8 @@ function loadMainData() {
  * 編集可能な情報を保存する関数
  */
 function saveMainData() {
-  saveDataToLocalStorage("gacyaData",MainData.getEditableDatas());
-  alert("レアリティ名を保存しました！");
+  saveDataToLocalStorage("gacyaData",{dataKey:MainData.dataKey,gachaName:MainData.gachaName});
+  alert("保存しました！");
 }
 /**
  * 文字列と一致するlocalstlageのデータを削除
@@ -474,9 +528,9 @@ function onProbInput(e) {
 // イベント登録
 window.addEventListener("DOMContentLoaded", () => {
   loadMainData();
+  updateLineupToZip();
   updateLabels();
   showLineup();
-
 
   //デバッグ用
   document.getElementById("showMaindatabutton").addEventListener("click", () => MainData.debugMainData());
@@ -485,28 +539,53 @@ window.addEventListener("DOMContentLoaded", () => {
     console.log("取得結果 →", allData);
   });
 
-  document.getElementById("importZipName").addEventListener("change", async(e) => {
-    const returnParam = await loadZip(e.target.value);
-    if(!returnParam) return;
-    
+  //過去に読み込んだファイルのロード
+  const loadZipNameElement = document.getElementById("loadZipName");
+  loadZipNameElement.addEventListener("change", async(e) => {
+    const loadDataKey = e.target.value;
+
+    if(!MainData.dataKey.includes(loadDataKey)) {
+      console.log("指定されたキーは存在しません");
+      MainData.initDefaultValue();
+      updateLabels();
+      showLineup();
+      return;
+    }
+    const returnParam = await loadFromIndexedDB(loadDataKey);    
+    if (!returnParam) {
+      console.log("データが見つかりません");
+      MainData.initDefaultValue();
+      updateLabels();
+      showLineup();
+      return;
+    }
+    else if(!(returnParam.blob instanceof Blob)){
+      MainData.setEditableDatas(returnParam.editableMainData);
+      updateLabels();
+      showLineup();
+      return;
+    }    
     MainData.resultItems = returnParam.resultItems;
     MainData.itemLineupNum = returnParam.fileNum;
     document.getElementById("lineupNum").value = MainData.itemLineupNum;
-    MainData.filesKey.push(returnParam.zipId);
-    MainData.filesKey = [...new Set(MainData.filesKey)];
+    if(!MainData.dataKey.includes(returnParam.zipId)) MainData.dataKey.push(returnParam.zipId);
+    MainData.gachaName.set(returnParam.zipId, returnParam.zipId);
     showLineup();
   });
 
+  //新規ファイルのインポート
   document.getElementById("importZip").addEventListener("change", async(e)=>{
     const returnParam = await importZipFile(e);
     if(!returnParam) return;
     
     MainData.resultItems = returnParam.resultItems;
     MainData.itemLineupNum = returnParam.fileNum;
-    MainData.filesKey.push(returnParam.zipId);
+    MainData.dataKey.push(returnParam.zipId);
+    MainData.gachaName.set(returnParam.zipId, returnParam.zipId);
     document.getElementById("lineupNum").value = MainData.itemLineupNum;
+    loadZipNameElement.value = returnParam.zipId;
     showLineup();
-    updateLineupToZip();
+    updateLineupToZip(returnParam.zipId);
     
   });
 
@@ -543,8 +622,45 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   //データの保存をクリックされた時
-  document.getElementById("saveButton").addEventListener("click", () =>saveMainData());
+  document.getElementById("saveButton").addEventListener("click", () =>{
+    const nameField = document.getElementById("gachaName");
+    const gachaName = nameField.value.trim();
+
+    if(!gachaName) {
+      alert("ガチャの名前を入力してください！");
+      return;
+    }
+    if(!MainData.dataKey.includes(gachaName)) MainData.dataKey.push(gachaName);
+    if(!MainData.gachaName.get(gachaName)) MainData.gachaName.set(gachaName,gachaName);
+    const saveData = MainData.getEditableDatas();
+    saveToIndexedDB(gachaName, "null", saveData);
+    saveMainData();
+    updateLineupToZip(gachaName);
+  });
 
   //保存したデータの削除をクリックされた時
   document.getElementById("deleteDataButton").addEventListener("click", () =>deleteMainData());
+
+  document.getElementById("showlocalstrage").addEventListener("click", () =>{
+
+    const datas = getDataFromLocalStorage("gacyaData");
+    if(!datas) {
+      console.log("localdataが存在しない");
+      return;
+    }
+    
+    if(datas.dataKey) {
+      for(let i = 0; i < datas.dataKey.length; i++) {
+        console.log(`${i} : ${datas.dataKey[i]}\n`);
+      }
+    }
+
+    if(datas.gachaName) {
+      for (const [indexKey, itemObj] of Object.entries(datas.gachaName)) {
+        const name = itemObj.itemName || "[\"空文字列\"]";
+        const rarity = itemObj.rarity || "(no rarity)";
+        msg += `  ${indexKey}: [Rarity: ${rarity}] ${name}\n`;
+      }
+    }
+  });
 });

@@ -7,9 +7,18 @@
   <body>
     <h2>ガチャ設定</h2>
 
-    <select id="importZipName" hidden></select>
+    <div>
+      ガチャ切り替え<br>
+      <select id="loadZipName">
+        <option>新規データ</option>
+      </select>
+    </div>
+
     <input type="file" id="importZip" accept=".zip">
 
+    <br><br>
+    ガチャの名前(保存用)<br>
+    <input type="text" id="gachaName">
 
     <h3>レアリティ名の編集</h3>
     <div id="rarityNamesEditor"></div>
@@ -31,9 +40,11 @@
 
 
     <div>
+      <br>
       (デバッグ用)
       <button id="showMaindatabutton">メインデータの表示</button>
       <button id="showDB">DBの表示</button>
+      <button id="showlocalstrage">localStorageの表示</button>
     </div><br>
 
     <label>ガチャラインナップ <input id="lineupNum"  type="number" value="5" step="1" min="1"> 個</label>

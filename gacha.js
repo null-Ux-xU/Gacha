@@ -19,20 +19,19 @@ export function gachaLogic({gachaCount, probabilities, rarityNum, rarityTable, i
     for (const rarity of rarityTable) {
         itemArray[rarity] = [];
     }
-
-    // for (const [indexKey, itemObj] of Object.entries(this.resultItems)) {
-    //   const name = itemObj.itemName || "[\"空文字列\"]";
-    //   const rarity = itemObj.rarity || "(no rarity)";
-    //   msg += `  ${indexKey}: [Rarity: ${rarity}] ${name}\n`;
-    // }
     
     //渡された配列からレアリティと名前を取り出し、詰め替える
-    const valueArray = Object.values(resultItems).slice(0, itemLineupNum);
-    for (const itemObj of valueArray) {
-        if(!itemObj.rarity) continue;
+    const entries = Object.entries(resultItems).slice(0, itemLineupNum);
 
-        const itemName = itemObj.itemName?.trim() || "はずれ"
-        if(itemArray[itemObj.rarity]) itemArray[itemObj.rarity].push(itemName);
+    for (const [indexNo, itemObj] of entries) {
+        if (!itemObj.rarity) continue;
+
+        const itemName = itemObj.itemName?.trim() || "はずれ";
+        const rarity = itemObj.rarity;
+
+        if (itemArray[rarity]) {
+            itemArray[rarity].push({ indexNo, itemName });
+        }
     }
 
      //フィルタ機能
@@ -94,14 +93,16 @@ export function gachaLogic({gachaCount, probabilities, rarityNum, rarityTable, i
         //アイテム抽選( "" or undefind は「はずれ」)
         const itemList = itemArray[rarity];
         let item = "はずれ";
+        let indexNo = null;
 
-        if (itemList.length > 0) {
+        if (itemList && itemList.length > 0) {
             const selected = itemList[Math.floor(mt.random() * itemList.length)];
-            // 空文字なら「はずれ」にする
-            item = selected && selected.trim() !== "" ? selected : "はずれ";
+            if (selected && selected.itemName.trim() !== "") {
+                item = selected.itemName;
+                indexNo = selected.indexNo;
+            }
         }
-
-        results.push({ rarity, item });
+        results.push({ rarity, item, indexNo });
     }
     return results;
 }

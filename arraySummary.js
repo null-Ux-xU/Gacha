@@ -11,7 +11,7 @@ export function arraySummary(array) {
   for (const obj of array) {
     const key = `${obj.rarity}-to-${obj.item}`;
     if (!summaryMap.has(key)) {
-      summaryMap.set(key, { rarity: obj.rarity, item: obj.item, val: 0 });
+      summaryMap.set(key, { rarity: obj.rarity, item: obj.item, val: 0 ,indexNo: obj.indexNo});
     }
     summaryMap.get(key).val++;
   }
