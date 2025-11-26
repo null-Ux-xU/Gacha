@@ -7,14 +7,14 @@
   </head>
   
   <body>
-    <h2>ガチャ設定</h2>
+    <h2>ガチャツール</h2>
 
-    <div>
+    <label class="loadZipName">
       ガチャ切り替え
       <select id="loadZipName">
         <option>新規データ</option>
       </select>
-    </div>
+    </label>
 
     <label class="file-btn">
       ファイルを選択
@@ -26,7 +26,7 @@
     ガチャの名前(保存用)<br>
     <input type="text" id="gachaName">
 
-    <h3>レアリティ名の編集</h3>
+    
     <div id="rarityNamesEditor"></div>
     <label>レアリティ数量 <input id="rarityNum" type="number" value="6" step="1" min="1" max="6"></label>
 
@@ -45,7 +45,7 @@
     </div>
 
 
-    <div>
+    <div id = "debug"class="debug">
       <br>
       (デバッグ用)
       <button id="showMaindatabutton">メインデータの表示</button>

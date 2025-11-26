@@ -1,12 +1,11 @@
-import { MersenneTwister } from "./MersenneTwister.js";
-import { gachaLogic } from "./gacha.js";
-import { sortByRarity } from "./sort.js";
-import { arraySummary } from "./arraySummary.js";
-import { createTableElement } from "./createTableElement.js";
-import {saveDataToLocalStorage, getDataFromLocalStorage} from "./localStrage.js";
-import {createTableHeader} from "./createTableHeader.js";
-import {importZipFile, getResultItemsToFile} from "./importZip.js";
-import {saveToIndexedDB, loadFromIndexedDB, clearAllIndexedDBData, showAllIndexedDBData} from "./indexedDB.js";
+import { gachaLogic } from "./GachaLogic/gacha.js";
+import { sortByRarity } from "./GachaLogic/sort.js";
+import { arraySummary } from "./GachaLogic/arraySummary.js";
+import { createTableElement } from "./Create/createTableElement.js";
+import {saveDataToLocalStorage, getDataFromLocalStorage} from "./DataSave/localStrage.js";
+import {createTableHeader} from "./Create/createTableHeader.js";
+import {importZipFile, getResultItemsToFile} from "./DataSave/importZip.js";
+import {saveToIndexedDB, loadFromIndexedDB, clearAllIndexedDBData, showAllIndexedDBData} from "./DataSave/indexedDB.js";
 
 class MainData
 {
