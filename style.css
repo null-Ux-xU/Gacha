@@ -162,7 +162,7 @@ td select {
   height: auto;
   border: none;
   outline: none;
-  margin: 0;
+  margin: 3px;
   padding: 0 6px;
   box-sizing: border-box; 
   align-items: center; 
