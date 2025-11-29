@@ -292,7 +292,7 @@ td .minus {
     height: 60px;
 }
 .rarityNum select {
-  width: 100px;
+  width: 150px;
   height: 50px;
   font-size: 45px;
   transform: translate3d(0,13px,0);
