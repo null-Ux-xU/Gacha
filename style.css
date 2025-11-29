@@ -390,3 +390,43 @@ input#gachaName {
 button#gachaCustom {
   margin: 14px;
 }
+
+details.terms {
+  margin-bottom: 16px;
+  margin-top: 25px;
+  cursor: pointer;
+}
+
+details.terms summary {
+  font-size: 40px;
+}
+
+details.terms .terms-content {
+  width: 95%;
+  margin: 10px auto; 
+  margin-left: 40px;
+  text-align: center;
+  border: 2px solid #CC91A2;
+  font-size: 25px;
+}
+details.terms .terms-content p {
+  display: inline-flex;
+  font-size: 25px;
+  margin: 0;
+  margin-bottom: 15px;
+}
+.terms-list {
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.terms-content ul{
+  white-space: nowrap;
+  text-align: left;  
+  padding-inline-start: 5px;
+}
+.terms-content li {
+  list-style: none;
+  font-size: 20px;
+  padding-right: 20xp;
+}
