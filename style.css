@@ -488,10 +488,19 @@ details.terms .terms-content p {
   text-align: center;
 }
 .Topics .TopicsText {
-  font-size: 15px;
+  font-size: 20px;
   text-align: center;
 }
-
+.Topics .TopicsText li{
+  list-style: none !important;
+}
+.userName {
+  font-size: 30px;
+}
+.userName input {
+  background-color: #FFFFFF;
+  border: 2px solid #CC91A2;
+}
 
 /* ▼スマホ（WebKit系）専用強制上書き対策 */
 @supports (-webkit-touch-callout: default) {

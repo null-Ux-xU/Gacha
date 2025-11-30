@@ -124,9 +124,9 @@ export async function loadZip(fileKey) {
  * ZIPファイルをダウンロード
  * @param {string} fileId 対象ファイル
  * @param {int[]} indexNoLen 対象のindex番号
- * @returns 成功:elament
+ * @param {string} exportFileName 出力するファイルの名前
  */
-export async function getResultItemsToFile(fileId, indexNoLen) {
+export async function getResultItemsToFile(fileId, indexNoLen, exportFileName) {
 
     const anchor = document.getElementById("downloadZipBtn");
 
@@ -164,6 +164,6 @@ export async function getResultItemsToFile(fileId, indexNoLen) {
 
     anchor.className="download-button";
     anchor.href = url;
-    anchor.download = `${fileId}.zip`;  
+    anchor.download = `${exportFileName}.zip`;  
 
 }

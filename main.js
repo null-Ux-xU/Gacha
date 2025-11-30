@@ -241,7 +241,8 @@ async function callMainAction(count) {
   const tbody = document.getElementById("resultBody");
   tbody.replaceChildren(); 
   const name = MainData.gachaName.get(MainData.onLoadedDatakey) ?? document.getElementById("gachaName").value;
-  let resultText = `ガチャ名:[${name?.trim() || "なし"}]${count}連\n` ?? "";
+  let userName = document.getElementById("userName").value || "名無し";
+  let resultText = `${userName}さん\nガチャ名:[${name?.trim() || "なし"}]${count}連\n` ?? "";
   for (const res of resultLen) {
     tbody.insertAdjacentHTML(
       "beforeend",
@@ -261,14 +262,14 @@ async function callMainAction(count) {
   MainData.tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(resultText)}`;
 
   if(MainData.onLoadedDatakey){
-    await getResultItemsToFile(MainData.onLoadedDatakey, resultIndexNo);
+    let faileName = `${userName}さん_ガチャ名[${name?.trim() || "なし"}]_${count}連結果`;
+    await getResultItemsToFile(MainData.onLoadedDatakey, resultIndexNo ,faileName);
   }
   else {
     const anchor = document.getElementById("downloadZipBtn");
     anchor.hidden = true;
     anchor.style.display = "none";
   }
-  
 }
 
 function updateLineupToZip(id) {
