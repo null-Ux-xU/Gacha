@@ -7,6 +7,7 @@ import {createTableHeader} from "./Create/createTableHeader.js";
 import {importZipFile, getResultItemsToFile} from "./DataSave/importZip.js";
 import {saveToIndexedDB, loadFromIndexedDB, clearAllIndexedDBData, showAllIndexedDBData, saveHistory, loadHistoryFromIndexedDB, buildHistoryString} from "./DataSave/indexedDB.js";
 import {getFormattedDate} from "./formattedDate.js"
+import { createURL } from "./exportHistoryToText.js";
 class MainData
 {
 
@@ -256,13 +257,16 @@ async function callMainAction(count) {
 
     resultText += `${MainData.rarityDisplayNames[res.rarity]}：${res.item} ×${res.val || 1}個\n`;
   }
-
   document.getElementById("resultElements").hidden = false;
+
+
+
   const twitterTag = "#空のつーる";
   resultText += twitterTag; 
   MainData.tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(resultText)}`;
 
   updateHistory(resultLen, userName, name?.trim());
+  
 
   if(MainData.onLoadedDatakey){
     let faileName = `${userName}さん_ガチャ名[${name?.trim() || "なし"}]_${count}連結果`;
@@ -562,12 +566,19 @@ async function updateHistory(data, userName, gachaName) {
     history[date][userName][gachaName].results.push(data);
 
     await saveHistory(history);
+    await activeHistory();
   });
 }
 
 function getSortType() {
   const selected = document.querySelector('input[name="raritySort"]:checked');
   return selected?.value ?? "none";
+}
+
+async function activeHistory() {
+  await loadHistoryFromIndexedDB(async (history) => {
+    createURL(buildHistoryString(history, MainData.rarityDisplayNames));
+  });
 }
 
 // イベント登録
@@ -735,7 +746,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("resultdownload").addEventListener("click", async ()=> {
     await loadHistoryFromIndexedDB(async (history) => {
-      console.log(await buildHistoryString(history, MainData.rarityDisplayNames));
+      const result = buildHistoryString(history, MainData.rarityDisplayNames);
+      if(result === false) {
+        alert("履歴が存在しません。");
+      }
+      console.log(result);
     });
   });
   document.getElementById("deleteHistory").addEventListener("click", async ()=>{

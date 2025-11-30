@@ -165,7 +165,7 @@ export async function getUrl(fileId, storeName = "GachaStore") {
 export function buildHistoryString(history, rarityDisplayNames) {
   
     if (!history || Object.keys(history).length === 0) {
-        return "履歴データが存在しません。";
+        return false;
     }
 
     let output = "=== 履歴データ一覧 ===\n\n";
