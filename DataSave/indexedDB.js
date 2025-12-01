@@ -63,8 +63,7 @@ export async function saveHistory(historyData) {
 
     const data = {
       id: "history",
-      count: historyData.count,
-      data: historyData.history
+      data: historyData
     };
 
     const request = store.put(data);
