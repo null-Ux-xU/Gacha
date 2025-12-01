@@ -6,6 +6,7 @@ body {
   text-align: center;
   background: #f9f9f9;
   font-size: 45px;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
 }
 
 h2, h3 {

@@ -43,5 +43,5 @@ export class MersenneTwister {
     seed ^= (Math.random() * 0xffffffff) | 0; // 追加分散
     
     return new MersenneTwister(seed >>> 0);
-}
+  }
 }
