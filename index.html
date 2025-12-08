@@ -49,7 +49,7 @@
       表示中のガチャ：
       <select id="loadZipName">
         <option>新規データ</option>
-      </select>
+      </select><br>
       <label class="file-btn">
         .zipファイル読込
         <input type="file" id="importZip" accept=".zip">
@@ -149,11 +149,11 @@
           <input type="radio" name="raritySort" value="none" checked /> ソートなし 
         </label> 
       </div> 
-      <label class="userName">
-        回した人の名前<br>
-        <input type="text" id="userName" autocomplete="on">
-      </label>
     </details>
+    <label class="userName">
+      回した人の名前<br>
+      <input type="text" id="userName" autocomplete="on">
+    </label>
 
     <label class="gachaCount">n = <input id="gachaCount" type="number" value="100" min="1" step="1" min="1"> 回</label><br>
 
@@ -178,7 +178,7 @@
       </a>
       <button id="tweetButton">結果をツイートする</button>
     </div>
-    <div class="version-tag">v1.1.2</div>
+    <div class="version-tag">v1.1.3</div>
 
     
     <script type="module" src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>

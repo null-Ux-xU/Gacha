@@ -41,8 +41,8 @@ select option {
 
 .loadZipName {
   text-align: left;
-  width: 100%;
-  margin-left: 60px;
+  width: 80%;
+  margin-left: 15%;
   margin-top: 60px;
   margin-bottom: 50px;
   border: 10px;
@@ -62,7 +62,7 @@ select option {
   padding-left: 5px;
   padding-right: 20px;
 }
-loadZipName option {
+.loadZipName option {
   width: auto;
   text-align: left;
   padding: 0;
@@ -130,7 +130,7 @@ button:hover,
   font-size: 25px;
   font-weight: bold;
   transform: translate3d(0,-5px,0);
-  margin-left: 20px;
+  margin-left: 25%;
 }
 
 /* 本来のファイル選択を非表示 */
@@ -502,9 +502,14 @@ details.terms .terms-content p {
   list-style: none !important;
 }
 .userName {
+  width: 100%;
   font-size: 30px;
+  display: inline-block;
+  text-align: center;
+  margin-top: 50px;
 }
 .userName input {
+  margin-top: 10px;
   background-color: #FFFFFF;
   border: 2px solid #8db6cf;
 }
