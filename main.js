@@ -7,7 +7,7 @@ import {createTableHeader} from "./Create/createTableHeader.js";
 import {importZipFile, getResultItemsToFile} from "./DataSave/importZip.js";
 import {saveToIndexedDB, loadFromIndexedDB, clearAllIndexedDBData, showAllIndexedDBData, saveHistory, loadHistoryFromIndexedDB} from "./DataSave/indexedDB.js";
 import {getFormattedDate} from "./DataSave/formattedDate.js";
-import { createCsvURL, createTextURL} from "./DataSave/exportHistoryToText.js";
+import { createCsvURL, createTextURL} from "./Create/createURL.js";
 import { showNotification } from "./showNotification.js";
 import { buildHistoryToTextString, buildHistoryToCsvString} from "./DataSave/exportHistoryData.js";
 
@@ -223,7 +223,7 @@ async function callMainAction(count) {
   });
 
   //レアリティソート
-  switch(getSortType()) {
+  switch(getValueToRadioButton("raritySort")) {
     case "desc": 
       sortByRarityFromLR(resultLen, MainData.rarityTable);
       break;
@@ -270,10 +270,10 @@ async function callMainAction(count) {
 
   updateHistory(resultLen, userName, name?.trim());
   
-
+  //ツイートボタン
   if(MainData.onLoadedDatakey){
-    let faileName = `${userName}さん_ガチャ名[${name?.trim() || "なし"}]_${count}連結果`;
-    await getResultItemsToFile(MainData.onLoadedDatakey, resultIndexNo ,faileName);
+    let fileName = `${userName}さん_ガチャ名[${name?.trim() || "なし"}]_${count}連結果`;
+    await getResultItemsToFile(MainData.onLoadedDatakey, resultIndexNo ,fileName);
   }
   else {
     const anchor = document.getElementById("downloadZipBtn");
@@ -512,15 +512,10 @@ function saveMainData() {
 /**
  * 文字列と一致するlocalstlageのデータを削除
  * 
- * @param {string} text localstrageの名前
+ * @param {String} text localstrageの名前
  */
 function deleteLocalStrageData(text) {
-  if(typeof text === "string") {
-    localStorage.removeItem(text);
-  }
-  else {
-    console.log("文字列じゃないよ");
-  }
+  localStorage.removeItem(String(text));
 }
 
 /**
@@ -556,49 +551,71 @@ function onProbInput(e) {
   MainData.editableWeights[rarity] = parseFloat(e.target.value) ?? MainData.baseWeights[rarity];
 }
 
+/**
+ * ガチャ履歴の更新
+ * 
+ * @param {object[]} data -ガチャ結果
+ * @param {String} userName -回した人の名前
+ * @param {String} gachaName -ガチャの名前
+ */
 async function updateHistory(data, userName, gachaName) {
-  await loadHistoryFromIndexedDB(async history => {
-    const date = getFormattedDate();
+  //履歴の読み込み
+  const history = await loadHistoryFromIndexedDB();
 
-    if (!history[date]) history[date] = {};
-    if (!history[date][userName]) history[date][userName] = {};
-    if (!history[date][userName][gachaName]) {
-      history[date][userName][gachaName] = {results: []};
-    }
-    history[date][userName][gachaName].results.push(data);
+  //yyyy/mm/ddの日時取得
+  const date = getFormattedDate();
 
-    await saveHistory(history);
-    await activeHistory();
-  });
+  //該当日時がなかったら作成
+  if (!history[date]) history[date] = {};
+
+  //該当ユーザーがなかったら作成
+  if (!history[date][userName]) history[date][userName] = {};
+
+  //該当ガチャがなかったらリザルトと共に作成
+  if (!history[date][userName][gachaName]) {
+    history[date][userName][gachaName] = {results: []};
+  }
+  //結果の追加
+  history[date][userName][gachaName].results.push(data);
+
+  await saveHistory(history);
+  await activeHistoryURL();
 }
 
-function getSortType() {
-  const selected = document.querySelector('input[name="raritySort"]:checked');
-  return selected?.value ?? "none";
-}
-
-function getDownloadType() {
-  const selected = document.querySelector('input[name="downloadType"]:checked');
+/**
+ * ラジオボタンの選択されているElementの値を取得する
+ * 
+ * @param {String} name - inputの名前
+ * @returns vale || "none"
+ */
+function getValueToRadioButton(name) {
+  const selected = document.querySelector(`input[name="${String(name)}"]:checked`);
   return selected?.value ?? "none";
 }
 
 /**
  * 履歴をダウンロードするためのURLを設定する
  */
-async function activeHistory() {
+async function activeHistoryURL() {
+  //履歴を取得
   await loadHistoryFromIndexedDB(async (history) => {
+    //文字列変換したデータを受け取る変数
     let resultValue;
-    switch(getDownloadType()) {
+    switch(getValueToRadioButton("downloadType")) {
+      //テキストファイル
       case ".txt": 
+        //結果をテキストファイル用の文字列に整形
         resultValue = buildHistoryToTextString(history, MainData.rarityDisplayNames);
+        //成功したらURLを作成
         if(resultValue !== false) createTextURL(resultValue);
         break;
-
+      //csvファイル
       case ".csv":
+        //結果をcsvファイル用の文字列に整形
         resultValue = buildHistoryToCsvString(history,MainData.rarityDisplayNames);
+        //成功したらURLを作成
         if(resultValue !== false) createCsvURL(resultValue);
         break;
-
       case "none": return;
     };
   });
@@ -611,7 +628,7 @@ window.addEventListener("DOMContentLoaded", () => {
   updateLineupToZip();
   updateLabels();
   showLineup();
-  activeHistory();
+  activeHistoryURL();
   const input = document.querySelector('input[type="text"][name="editRarityDisplayNameForm"]');
   input.addEventListener('input', () => {
     if (input.value.length > 10) {
@@ -723,7 +740,7 @@ window.addEventListener("DOMContentLoaded", () => {
           deleteMainData();   //localstrageも削除
           location.reload();  //ページのリロード
 
-        }).catch(async err => {
+        }).catch(async () => {
           await showNotification("削除に失敗しました。", "error");
         });
     }
@@ -790,7 +807,7 @@ window.addEventListener("DOMContentLoaded", () => {
   });
   //ラジオボタンの変更イベント
   document.querySelectorAll('input[name="downloadType"]').forEach((radio) => {
-    radio.addEventListener("change", async() => await activeHistory());
+    radio.addEventListener("change", async() => await activeHistoryURL());
   });
 
   document.getElementById("deleteHistory").addEventListener("click", async ()=>{

@@ -1,7 +1,7 @@
 /**
  * DBをひらく
  * @param {string} storeName 
- * @returns 
+ * @returns Promise
  */
 function openDB(storeName ="GachaStore") {
   return new Promise((resolve, reject) => {
@@ -35,6 +35,7 @@ export async function saveToIndexedDB(keyId, gachaName, fileBlob = null, editabl
     const tx = db.transaction(storeName, "readwrite");
     const store = tx.objectStore(storeName);
 
+    //連想配列にして保存
     const data = {
       id: keyId,
       gachaName,
@@ -50,9 +51,12 @@ export async function saveToIndexedDB(keyId, gachaName, fileBlob = null, editabl
   });
 }
 
+
 /**
+ * 履歴を上書き保存
  * 
- * ガチャ履歴の保存
+ * @param {String} historyData -履歴
+ * @returns 
  */
 export async function saveHistory(historyData) {
     const db = await openDB("history");
@@ -76,9 +80,9 @@ export async function saveHistory(historyData) {
 /**
  * DBにあるデータをロード
  * 
- * @param {string} keyId 
- * @param {string} storeName 
- * @returns SaveData(saveToIndexedDBのdata参照)
+ * @param {String} keyId 
+ * @param {String} storeName 
+ * @returns {Object} - data = { id, gachaName, zipFileName, blob, editableMainData };
  */
 export async function loadFromIndexedDB(keyId, storeName = "GachaStore") {
   const db = await openDB(storeName);
@@ -93,33 +97,26 @@ export async function loadFromIndexedDB(keyId, storeName = "GachaStore") {
 }
 
 /**
- * 履歴ダウンロード 
- *
- * @returns data
+ * DBにある履歴をロード
+ * 
+ * @returns {Object[]} - data
  */
-export async function loadHistoryFromIndexedDB(callback) {
+export async function loadHistoryFromIndexedDB() {
   const db = await openDB("history");
   return new Promise((resolve, reject) => {
     const tx = db.transaction("history", "readonly");
     const store = tx.objectStore("history");
     const request = store.get("history");
 
-    request.onsuccess = () => {
-      if (request.result && request.result.data) {
-        callback(request.result.data);
-      }
-      else {
-        //データが無ければ空オブジェクト
-        callback({});
-      }
-    };
+    request.onsuccess = () => resolve(request.result?.data || {});
     request.onerror = () => reject(request.error);
   });
 }
 
 /**
- * DB内のデータ全削除
- * @param {string} storeName 
+ * 指定のDB内のデータ全削除
+ * 
+ * @param {string} storeName - DBの名前
  */
 export async function clearAllIndexedDBData(storeName = "GachaStore") {
   const db = await openDB(storeName);
@@ -140,20 +137,6 @@ export async function clearAllIndexedDBData(storeName = "GachaStore") {
       reject(request.error);
     };
   });
-}
-
-/**
- * URLを取得する
- * 
- * @param {string} fileId ファイル名 
- * @returns {URL} URL.revokeObjectURL(this)を忘れずに
- */
-export async function getUrl(fileId, storeName = "GachaStore") {
-    const data = await loadFromIndexedDB(storeName, fileId);
-    if (!data) {
-        throw new Error("該当するファイルが見つかりません。");
-    }
-    return URL.createObjectURL(data.blob);
 }
 
 /**

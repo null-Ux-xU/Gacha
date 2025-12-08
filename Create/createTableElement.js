@@ -34,6 +34,7 @@ export function createTableElement({elementId, elementName, inputType, inputValu
         const plus = document.createElement("button");
         const minus = document.createElement("button");
 
+        //+ - のボタン作成
         numberDiv.className = "numberInputDiv";
         numberDiv.className = "stepper";
         plus.textContent = "+";
@@ -52,12 +53,12 @@ export function createTableElement({elementId, elementName, inputType, inputValu
             input.value = newvalue.toFixed(2);
         };
 
-
+        //ボタンを押したときの増加量
         input.step = parseFloat(step);
         
+        //要素を追加
         numberFrag.append(input, plus, minus);
         numberDiv.appendChild(numberFrag);
-
         wrapper = numberDiv;
     }
     if(divWrapperName) {
@@ -73,5 +74,4 @@ export function createTableElement({elementId, elementName, inputType, inputValu
     tdElement.appendChild(frag);
 
     return tdElement;
-    
 }

@@ -1,4 +1,4 @@
-import {saveToIndexedDB, getUrl, loadFromIndexedDB} from "./indexedDB.js";
+import {saveToIndexedDB, loadFromIndexedDB} from "./indexedDB.js";
 import { showNotification } from "../showNotification.js";
 
 /**
@@ -74,6 +74,7 @@ async function  takeOutFileContents(file) {
  */
 export async function importZipFile(event) {
 
+    //一つしか読み込まない
     const file = event.target.files[0];
     if(!file) {
         showNotification("ファイルの読み込みに失敗しました", "error", 4000);
@@ -122,8 +123,8 @@ export async function loadZip(fileKey) {
 
 /**
  * ZIPファイルをダウンロード
- * @param {string} fileId 対象ファイル
- * @param {int[]} indexNoLen 対象のindex番号
+ * @param {String} fileId 対象ファイル
+ * @param {Number[]} indexNoLen 対象のindex番号
  * @param {string} exportFileName 出力するファイルの名前
  */
 export async function getResultItemsToFile(fileId, indexNoLen, exportFileName) {
