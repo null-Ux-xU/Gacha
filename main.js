@@ -748,11 +748,10 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("saveButton").addEventListener("click", async() =>{
     //保存する名前の取得
     const nameField = document.getElementById("gachaName");
-    const gachaName = nameField.value.trim() || MainData.gachaName.get(MainData.onLoadedDatakey);
-    
+    const gachaName = nameField.value.trim();
+    const errorText = document.getElementById("errorText");
+
     if(!gachaName) {
-      const errorText = document.getElementById("errorText");
-      
       nameField.style.border = "5px solid #8a0b0b";
       errorText.hidden = false;
       await showNotification("名前を入力してください", "error", 1500);
