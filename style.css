@@ -156,7 +156,6 @@ td {
   font-size: 35px;
   padding: 0;
   position: relative;
-  background-color: #f6f6f6;
 }
 td input,
 td select {
@@ -191,7 +190,9 @@ td input[type="number"][name="editRarityProbabilityForm"] {
   background: #f6f6f6;
 }
 
-
+.resultBody td {
+  background-color: #f9f9f9;
+}
 .ProbabilityWrapper::after {
   content: "%";
   position: absolute;
