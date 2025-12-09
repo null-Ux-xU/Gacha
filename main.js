@@ -18,6 +18,7 @@ class MainData
 
   //レアリティのベース
   static rarityTable = ["N", "R", "SR", "SSR", "UR" ,"LR"];
+  static rarityColor = ["", "" ,"0ae30dff" , "0d2ed1ff", "cf4ed3ff", "c2e71dff"]
   
   //レアリティ名、排出確率のヘッダーテキスト
   static rarityDisplayHeaderTextArray = ["表示名（編集可）", "排出確率（%）"]; 
@@ -235,35 +236,77 @@ async function callMainAction(count) {
     case "none": break;
   };
 
-  //重複をまとめた表示
+  //重複をまとめる
   if (document.getElementById("combineDuplicates")?.checked) {
     resultLen = arraySummary(resultLen);
   }
 
-
   //表示処理
-  const resultIndexNo = [];
   const tbody = document.getElementById("resultBody");
   tbody.replaceChildren(); 
+  
+
+
+  //zipダウンロード用の変数の生成
+  const resultIndexNo = [];
   const name = MainData.gachaName.get(MainData.onLoadedDatakey) ?? document.getElementById("gachaName").value;
   let userName = document.getElementById("userName").value || "名無し";
   let resultText = `${userName}さん\nガチャ名:[${name?.trim() || "なし"}]${count}連\n` ?? "";
+  
+  const frag = document.createDocumentFragment(); //DOMアクセスを減らせるらしい
+
   for (const res of resultLen) {
-    tbody.insertAdjacentHTML(
-      "beforeend",
-      `<tr><td>${MainData.rarityDisplayNames[res.rarity]}</td><td>${res.item}</td><td>×${res.val || 1}個</td></tr>`
-    );
-    console.log(`${res.indexNo}`);
+    const tr = document.createElement("tr");
+    const rarityTd = document.createElement("td");
+    const itemTd = document.createElement("td");
+    const valueTd = document.createElement("td");
+
+    rarityTd.insertAdjacentText("beforeend", `${MainData.rarityDisplayNames[res.rarity]}`);
+    itemTd.insertAdjacentText("beforeend", `${res.item}`);
+    valueTd.insertAdjacentText("beforeend", `x${res.val || 1}個`);
+
+    
+    //レアリティ毎の強調表示
+    // if (document.getElementById("color")?.checked) {
+      switch(res.rarity) {
+        case `${MainData.rarityTable[5]}`:
+          rarityTd.style.backgroundColor = MainData.rarityColor[5];
+          break;
+        case`${MainData.rarityTable[4]}`:
+          rarityTd.style.backgroundColor = MainData.rarityColor[4];
+          break;
+        case`${MainData.rarityTable[3]}`:
+          rarityTd.style.backgroundColor = MainData.rarityColor[3];
+          break;
+        case`${MainData.rarityTable[2]}`:
+          rarityTd.style.backgroundColor = MainData.rarityColor[2];
+          break;
+        case`${MainData.rarityTable[1]}`:
+          rarityTd.style.backgroundColor = MainData.rarityColor[1];
+          break;
+        case`${MainData.rarityTable[0]}`:
+          rarityTd.style.backgroundColor = MainData.rarityColor[0];
+          break;
+      }
+    // }
+    tr.append(rarityTd, itemTd, valueTd);
+
+    frag.appendChild(tr);
+
+
+
+
+
     const index = parseInt(res.indexNo?.split(".")[1] ?? -1, 10);
     resultIndexNo.push(index);
-    console.log(index);
+    console.log(`${res.indexNo}:${index}`);
 
     resultText += `${MainData.rarityDisplayNames[res.rarity]}：${res.item} ×${res.val || 1}個\n`;
   }
+  tbody.appendChild(frag);
   document.getElementById("resultElements").hidden = false;
 
-
-
+  //結果ツイート文生成
   const twitterTag = "#空のつーる";
   resultText += twitterTag; 
   MainData.tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(resultText)}`;
