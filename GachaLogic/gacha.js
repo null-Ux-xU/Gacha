@@ -1,5 +1,3 @@
-import { MersenneTwister } from "./MersenneTwister.js";
-
 
 /**
  * ガチャを引く
@@ -11,9 +9,16 @@ import { MersenneTwister } from "./MersenneTwister.js";
  * @param {int} params.itemLineupNum - ラインナップの表示個数
  * @param {string[]} params.resultItems - アイテムリスト
  * @param {bool} params.isFilterOnlyActiveItems - 表示されているアイテムリストのに存在するレアリティの中から抽選 default:true
+ * @param {object} params.createRandomObject - 乱数生成機
  * @returns {Object[]} 排出されたアイテム群[({ レアリティ, アイテム })]
  */
-export function gachaLogic({gachaCount, probabilities, rarityNum, rarityTable, itemLineupNum, resultItems, isFilterOnlyActiveItems = true}) {
+export function gachaLogic({gachaCount, probabilities, rarityNum, rarityTable, itemLineupNum, resultItems, isFilterOnlyActiveItems = true, createRandomObject = null}) {
+
+    if(!createRandomObject) {
+        console.log("乱数生成機を渡せ");
+        return;
+    }
+
     //配列生成
     const itemArray = {};
     for (const rarity of rarityTable) {
@@ -62,9 +67,6 @@ export function gachaLogic({gachaCount, probabilities, rarityNum, rarityTable, i
         cumulativeProb.push(sum);
     }
 
-    //乱数生成
-    const mt = MersenneTwister.createMTWithStrongSeed();
-
     //結果を代入する配列
     const results = [];
 
@@ -72,7 +74,7 @@ export function gachaLogic({gachaCount, probabilities, rarityNum, rarityTable, i
     for(let i = 0; i < gachaCount; i++ ){
         
         //乱数生成
-        let rand = mt.random()*100;
+        let rand = createRandomObject.random()*100;
 
         // 二分探索でレアリティ決定
         let left = 0, right = rarityNum - 1
@@ -96,7 +98,7 @@ export function gachaLogic({gachaCount, probabilities, rarityNum, rarityTable, i
         let indexNo = null;
 
         if (itemList && itemList.length > 0) {
-            const selected = itemList[Math.floor(mt.random() * itemList.length)];
+            const selected = itemList[Math.floor(createRandomObject.random() * itemList.length)];
             if (selected && selected.itemName.trim() !== "") {
                 item = selected.itemName;
                 indexNo = selected.indexNo;

@@ -142,7 +142,7 @@ table {
   width: 90%;
   margin: 0 auto; 
   border-collapse: collapse;
-  background: #e0e0e0;  
+  background: #f6f6f6;  
 }
 
 th {
@@ -152,11 +152,11 @@ th {
   background: #8db6cf;
 }
 td {
-  border: 2px solid #000000;
+  border: 1px solid #000000;
   font-size: 35px;
   padding: 0;
   position: relative;
-  background-color: #e0e0e0;
+  background-color: #f6f6f6;
 }
 td input,
 td select {
@@ -169,10 +169,10 @@ td select {
   box-sizing: border-box; 
   align-items: center; 
   line-height: 1;
-  background: #e0e0e0;
+  background: #f6f6f6;
 }
 td input[type="text"] {
-  background: #e0e0e0;
+  background: #f6f6f6;
 }
 /* レアリティ名編集input */
 td input[type="text"][name="editRarityDisplayNameForm"] {
@@ -188,7 +188,7 @@ td input[type="number"][name="editRarityProbabilityForm"] {
   border: none;
   padding-left: 10px;
   margin: 5px;
-  background: #e0e0e0;
+  background: #f6f6f6;
 }
 
 
