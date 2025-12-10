@@ -77,6 +77,9 @@ class MainData
 
   //ユーザーが設定したレアリティの確率
   static editableWeights = [];
+
+  //詳細設定の選択状態の保持
+  static userSettings ={};
   //------------------------
 
   /**
@@ -85,14 +88,49 @@ class MainData
    * @returns 編集可能な変数名をキーとした連想配列
    */
   static getEditableDatas() {
+    MainData.saveUserSettings();
     const datas = {
       rarityNum: this.rarityNum,
       itemLineupNum: this.itemLineupNum,
       rarityDisplayNames: this.rarityDisplayNames,
       resultItems: this.resultItems,
-      editableWeights: this.editableWeights
+      editableWeights: this.editableWeights,
+      userSettings: this.userSettings
     }
     return datas; 
+  }
+
+  /**
+   * 出力方式、詳細設定の保存用関数
+   */
+  static saveUserSettings() {
+    const downloadType = getValueToRadioButton("downloadType");
+    const isFilterOnlyActiveItems = document.getElementById("isFilterOnlyActiveItems")?.checked;
+    const combineDuplicates = document.getElementById("combineDuplicates")?.checked;
+    const rarityHighlight = document.getElementById("rarityHighlight")?.checked;
+    const sortType = getValueToRadioButton("raritySort");
+
+    this.userSettings = {
+      downloadType,
+      isFilterOnlyActiveItems,
+      combineDuplicates,
+      rarityHighlight,
+      sortType
+    }
+  }
+
+  static loadUserSettings() {
+    const downloadType = document.querySelector(`input[value="${MainData.userSettings.downloadType}"]`) || document.querySelector(`input[value=".txt"]`);
+    const isFilterOnlyActiveItems = document.getElementById("isFilterOnlyActiveItems");
+    const combineDuplicates = document.getElementById("combineDuplicates");
+    const rarityHighlight = document.getElementById("rarityHighlight");
+    const sortType = document.querySelector(`input[value="${MainData.userSettings.sortType}"]`)|| document.querySelector(`input[value="none"]`);
+
+    if(downloadType)downloadType.checked = true;
+    isFilterOnlyActiveItems.checked = MainData.userSettings.isFilterOnlyActiveItems || true;
+    combineDuplicates.checked = MainData.userSettings.combineDuplicates || true;
+    rarityHighlight.checked = MainData.userSettings.rarityHighlight || false;
+    if(sortType)sortType.checked = true;
   }
 
   /**
@@ -105,7 +143,8 @@ class MainData
       itemLineupNum = null,
       rarityDisplayNames = null,
       resultItems = null,
-      editableWeights = null 
+      editableWeights = null,
+      userSettings = null 
     } = {}) {
     this.rarityNum = rarityNum ?? 6;
     this.itemLineupNum = itemLineupNum ?? 5;
@@ -124,11 +163,18 @@ class MainData
         LR: "LR"
       };
     }
+
+    
+
     //HTMLに対して値の変更を反映
     const elementRarityNum = document.getElementById("rarityNum");
     elementRarityNum.value = this.rarityNum;
     elementRarityNum.options[elementRarityNum.value - 1];
     document.getElementById("lineupNum").value = this.itemLineupNum;
+    if(userSettings) {
+      this.userSettings = Object.entries(userSettings);
+    }
+    MainData.loadUserSettings();
     updateLabels();
     showLineup();
   }
@@ -191,6 +237,13 @@ class MainData
     }
     msg += "\n";
     msg += `[onLoadedDatakey]:${MainData.onLoadedDatakey}`;
+
+    msg += "\n";
+    msg += "[userSettings]\n";
+
+    for (const [indexKey, value] of Object.entries(this.userSettings)) {
+      msg += `  ${indexKey}: ${value}\n`;
+    }
 
     console.log(msg);
   }
@@ -852,6 +905,8 @@ window.addEventListener("DOMContentLoaded", () => {
     else {
       await callMainAction(count);
     }
+
+    MainData.saveUserSettings();
   });
   //履歴の取得(ダウンロードリンクがない場合)
   const resultdownload = document.querySelector('a#resultdownload');

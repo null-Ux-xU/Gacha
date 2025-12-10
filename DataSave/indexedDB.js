@@ -186,9 +186,20 @@ export async function showAllIndexedDBData(storeName = "GachaStore") {
           for (const [key,val] of Object.entries(meta.editableWeights)) {
             console.log(`  ${key}: ${val}`);
           }
-        } else {
+        } 
+        else {
           console.log("  null");
         }
+        console.log("userSettings:");
+        if(meta.userSettings) {
+          for (const [indexKey, value] of Object.entries(meta.userSettings)) {
+          console.log( `  ${indexKey}: ${value}\n`);
+          }
+        }
+        else {
+          console.log("  null");
+        }
+        
         console.groupEnd();
       });
       console.groupEnd();
