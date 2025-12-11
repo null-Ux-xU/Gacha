@@ -910,11 +910,14 @@ window.addEventListener("DOMContentLoaded", () => {
     if (confirm(`ガチャの履歴が「全て」削除されます。\nよろしいですか？`)) {
         //全削除
         clearAllIndexedDBData("history").then(async () => {
-          location.reload();  //ページのリロード
+          
           await showNotification("削除が完了しました。", "success");
         }).catch(async err => {
           await showNotification("削除に失敗しました。", "error");
         });
+      const link = document.getElementById("resultdownload");
+      link.removeAttribute("href");
+      link.removeAttribute("download");
     }
   });
   document.getElementById("tweetButton").addEventListener("click", ()=> {
