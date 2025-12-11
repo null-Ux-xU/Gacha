@@ -72,7 +72,7 @@ select option {
 
 /*デバッグボタンの非表示*/
 .debug{
-  /* display: none; */
+  display: none;
 }
 
 button,
@@ -189,7 +189,14 @@ td input[type="number"][name="editRarityProbabilityForm"] {
   margin: 5px;
   background: #f6f6f6;
 }
+td.N { background-color: #f6f6f6; }
+td.R { background-color: #f6f6f6; }
+td.SR { background-color: lightgreen; }
+td.SSR { background-color: lightgoldenrodyellow; } 
+td.UR { background-color: lightcyan; }
+td.LR { background-color: lightpink; }
 
+/*static rarityColor = ["", "" ,"lightgreen" , "lightgoldenrodyellow", "lightcyan", "lightpink"];*/
 .resultBody td {
   background-color: #f9f9f9;
 }

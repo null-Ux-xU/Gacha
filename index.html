@@ -52,7 +52,7 @@
         <option>新規データ</option>
       </select><br>
       <label class="file-btn">
-        .zipファイル読込
+        zipファイル読込
         <input type="file" id="importZip" accept=".zip">
       </label>
     </div>
@@ -85,12 +85,6 @@
       <label>LR: <input id="probLR" type="number" value="0.25" step="0.1"> %</label><br>
     </div>
 
-    <div>
-      <button id="saveButton" class="saveButton">編集したデータの保存</button>
-      <button id="deleteDataButton" class="deleteDataButton">保存したデータの削除</button>
-    </div>
-
-
     <div id = "debug"class="debug">
       <br>
       (デバッグ用)
@@ -109,6 +103,11 @@
     </label>
 
     <table id="lineupTable" class="lineupTable"></table>
+
+    <div>
+      <button id="saveButton" class="saveButton">編集したデータの保存</button>
+      <button id="deleteDataButton" class="deleteDataButton">保存したデータの削除</button>
+    </div>
 
     <details>
       <summary>履歴</summary>
@@ -183,7 +182,7 @@
       </a>
       <button id="tweetButton">結果をツイートする</button>
     </div>
-    <div class="version-tag">v1.2.5</div>
+    <div class="version-tag">v1.3.6</div>
 
     
     <script type="module" src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>

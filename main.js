@@ -20,7 +20,6 @@ class MainData
 
   //レアリティのベース
   static rarityTable = ["N", "R", "SR", "SSR", "UR" ,"LR"];
-  static rarityColor = ["", "" ,"lightgreen" , "lightgoldenrodyellow", "lightcyan", "lightpink"]
   
   //レアリティ名、排出確率のヘッダーテキスト
   static rarityDisplayHeaderTextArray = ["表示名（編集可）", "排出確率（%）"]; 
@@ -119,18 +118,23 @@ class MainData
     }
   }
 
+  /**
+   * 保存されたユーザー設定の反映
+   */
   static loadUserSettings() {
-    const downloadType = document.querySelector(`input[value="${MainData.userSettings.downloadType}"]`) || document.querySelector(`input[value=".txt"]`);
+    //対象のElementを取得
+    const downloadType = document.querySelector(`input[value="${MainData.userSettings?.downloadType}"]`) ?? document.querySelector(`input[value=".txt"]`);
     const isFilterOnlyActiveItems = document.getElementById("isFilterOnlyActiveItems");
     const combineDuplicates = document.getElementById("combineDuplicates");
     const rarityHighlight = document.getElementById("rarityHighlight");
-    const sortType = document.querySelector(`input[value="${MainData.userSettings.sortType}"]`)|| document.querySelector(`input[value="none"]`);
+    const sortType = document.querySelector(`input[value="${MainData.userSettings?.sortType}"]`) ?? document.querySelector(`input[value="none"]`);
 
-    if(downloadType)downloadType.checked = true;
-    isFilterOnlyActiveItems.checked = MainData.userSettings.isFilterOnlyActiveItems || true;
-    combineDuplicates.checked = MainData.userSettings.combineDuplicates || true;
-    rarityHighlight.checked = MainData.userSettings.rarityHighlight || false;
-    if(sortType)sortType.checked = true;
+    
+    isFilterOnlyActiveItems.checked = MainData.userSettings?.isFilterOnlyActiveItems ?? true;
+    combineDuplicates.checked = MainData.userSettings?.combineDuplicates ?? true;
+    rarityHighlight.checked = MainData.userSettings?.rarityHighlight ?? false;
+    downloadType.checked = true;
+    sortType.checked = true;
   }
 
   /**
@@ -172,7 +176,10 @@ class MainData
     elementRarityNum.options[elementRarityNum.value - 1];
     document.getElementById("lineupNum").value = this.itemLineupNum;
     if(userSettings) {
-      this.userSettings = Object.entries(userSettings);
+      this.userSettings = structuredClone(userSettings);
+    }
+    else {
+      this.userSettings = null;
     }
     MainData.loadUserSettings();
     updateLabels();
@@ -239,11 +246,18 @@ class MainData
     msg += `[onLoadedDatakey]:${MainData.onLoadedDatakey}`;
 
     msg += "\n";
-    msg += "[userSettings]\n";
+    msg += "[userSettings]";
 
-    for (const [indexKey, value] of Object.entries(this.userSettings)) {
-      msg += `  ${indexKey}: ${value}\n`;
+    if(this.userSettings){
+      msg += `\n`;
+      for (const [indexKey, value] of Object.entries(this.userSettings)) {
+        msg += `  ${indexKey}: ${value}\n`;
+      }
     }
+    else {
+      msg += `:null`
+    }
+
 
     console.log(msg);
   }
@@ -324,38 +338,10 @@ async function callMainAction(count) {
     
     //レアリティ毎の強調表示
     if (document.getElementById("rarityHighlight")?.checked) {
-      switch(res.rarity) {
-        case `${MainData.rarityTable[5]}`:
-          rarityTd.style.backgroundColor = MainData.rarityColor[5];
-          itemTd.style.backgroundColor = MainData.rarityColor[5];
-          valueTd.style.backgroundColor = MainData.rarityColor[5];
-          break;
-        case`${MainData.rarityTable[4]}`:
-          rarityTd.style.backgroundColor = MainData.rarityColor[4];
-          itemTd.style.backgroundColor = MainData.rarityColor[4];
-          valueTd.style.backgroundColor = MainData.rarityColor[4];
-          break;
-        case`${MainData.rarityTable[3]}`:
-          rarityTd.style.backgroundColor = MainData.rarityColor[3];
-          itemTd.style.backgroundColor = MainData.rarityColor[3];
-          valueTd.style.backgroundColor = MainData.rarityColor[3];
-          break;
-        case`${MainData.rarityTable[2]}`:
-          rarityTd.style.backgroundColor = MainData.rarityColor[2];
-          itemTd.style.backgroundColor = MainData.rarityColor[2];
-          valueTd.style.backgroundColor = MainData.rarityColor[2];
-          break;
-        case`${MainData.rarityTable[1]}`:
-          rarityTd.style.backgroundColor = MainData.rarityColor[1];
-          itemTd.style.backgroundColor = MainData.rarityColor[1];
-          valueTd.style.backgroundColor = MainData.rarityColor[1];
-          break;
-        case`${MainData.rarityTable[0]}`:
-          rarityTd.style.backgroundColor = MainData.rarityColor[0];
-          itemTd.style.backgroundColor = MainData.rarityColor[0];
-          valueTd.style.backgroundColor = MainData.rarityColor[0];
-          break;
-      }
+      //色の指定はcssで行っている
+      rarityTd.classList.add(`${res.rarity}`);
+      itemTd.classList.add(`${res.rarity}`);
+      valueTd.classList.add(`${res.rarity}`);
     }
     tr.append(rarityTd, itemTd, valueTd);
     frag.appendChild(tr);
