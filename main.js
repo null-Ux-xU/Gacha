@@ -690,27 +690,26 @@ function getValueToRadioButton(name) {
  */
 async function activeHistoryURL() {
   //履歴を取得
-  await loadHistoryFromIndexedDB(async (history) => {
-    //文字列変換したデータを受け取る変数
-    let resultValue;
-    switch(getValueToRadioButton("downloadType")) {
-      //テキストファイル
-      case ".txt": 
-        //結果をテキストファイル用の文字列に整形
-        resultValue = buildHistoryToTextString(history, MainData.rarityDisplayNames);
-        //成功したらURLを作成
-        if(resultValue !== false) createTextURL(resultValue);
-        break;
-      //csvファイル
-      case ".csv":
-        //結果をcsvファイル用の文字列に整形
-        resultValue = buildHistoryToCsvString(history,MainData.rarityDisplayNames);
-        //成功したらURLを作成
-        if(resultValue !== false) createCsvURL(resultValue);
-        break;
-      case "none": return;
-    };
-  });
+  const history = await loadHistoryFromIndexedDB();
+  //文字列変換したデータを受け取る変数
+  let resultValue;
+  switch(getValueToRadioButton("downloadType")) {
+    //テキストファイル
+    case ".txt": 
+      //結果をテキストファイル用の文字列に整形
+      resultValue = buildHistoryToTextString(history, MainData.rarityDisplayNames);
+      //成功したらURLを作成
+      if(resultValue !== false) createTextURL(resultValue);
+      break;
+    //csvファイル
+    case ".csv":
+      //結果をcsvファイル用の文字列に整形
+      resultValue = buildHistoryToCsvString(history,MainData.rarityDisplayNames);
+      //成功したらURLを作成
+      if(resultValue !== false) createCsvURL(resultValue);
+      break;
+    case "none": return;
+  };
 }
 
 // イベント登録
