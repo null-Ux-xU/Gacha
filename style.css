@@ -505,11 +505,18 @@ details.terms .terms-content p {
 }
 .Topics .TopicsText {
   font-size: 20px;
-  text-align: center;
+  display: inline-block;
+  width: fit-content;
+  text-align: left;
 }
 .Topics .TopicsText li{
   list-style: none !important;
 }
+.Topics .TopicsText .explanationText {
+  text-align: center;
+}
+
+
 .userName {
   width: 100%;
   font-size: 30px;
