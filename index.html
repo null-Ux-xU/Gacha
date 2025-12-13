@@ -11,16 +11,14 @@
   <body>
     <div id="notification" class="notification" role="status" aria-live="polite" hidden></div>
     <h2>ガチャツール</h2>
-    
     <dev class="Topics">
       Topics<br>
       <dev class="TopicsText">
         利用規約の変更、機能追加をお知らせします
         <ul>
-          <li>・12/12 詳細設定も保存対象になりました。</li>
           <li>・12/12 使用方法を更新しました。</li>
+          <li>・12/13 ラインナップのツイート機能を追加しました。</li>
         </ul>
-        
       </dev>
     </dev>
 
@@ -92,6 +90,10 @@
       <button id="showMaindatabutton">メインデータの表示</button>
       <button id="showDB">DBの表示</button>
       <button id="showlocalstrage">localStorageの表示</button>
+      <label class="checkbox checkbox--icon-right noneItem"> 
+        ラインナップに無いレアリティを出さない 
+        <input class="checkbox_icon" type="checkbox" id="isFilterOnlyActiveItems" checked/> 
+      </label> 
     </div><br>
 
     <label class="lineupNum">
@@ -101,6 +103,7 @@
         <button id="lineupPlus" class="plus">+</button>
         <button id="lineupMinus" class="minus">-</button>
       </div>
+      <button id="showItems" class="showItems">一覧をツイート</button>
     </label>
 
     <table id="lineupTable" class="lineupTable"></table>
@@ -118,10 +121,10 @@
       <button id="deleteHistory" class="deleteDataButton">履歴の削除</button>
 
       <div class="downloadTypeGroup"> 
-        <label class="radio"> 
+        <label class="radioHistory"> 
           <input type="radio" name="downloadType" value=".txt" checked/> テキストファイルでダウンロード
         </label> 
-        <label class="radio"> 
+        <label class="radioHistory"> 
           <input type="radio" name="downloadType" value=".csv" /> csvファイルでダウンロード
         </label> 
       </div> 
@@ -129,29 +132,25 @@
     <br>
     <details>
       <summary>詳細設定</summary>
-      <div> 
+      <div class="optionMargin"> 
         <label class="checkbox checkbox--icon-right"> 
-          ラインナップに無いレアリティを出さない 
-          <input class="checkbox_icon" type="checkbox" id="isFilterOnlyActiveItems" checked/> 
-        </label> 
-        <label class="checkbox checkbox--icon-right"> 
-          重複した結果をまとめて表示する 
+          重複をまとめる 
           <input class="checkbox_icon" type="checkbox" id="combineDuplicates" checked/> 
         </label> 
         <label class="checkbox checkbox--icon-right"> 
-          高レアリティの強調表示 
-          <input class="checkbox_icon" type="checkbox" id="rarityHighlight"/> 
+          高レアの強調 
+          <input class="checkbox_icon checkbox_icon_No2" type="checkbox" id="rarityHighlight"/> 
         </label> 
       </div> 
       <div class="sort-option-group"> 
         <label class="radio"> 
-          <input type="radio" name="raritySort" value="asc" /> レアリティ昇順ソート(N → LR) 
+          <input type="radio" name="raritySort" value="asc" /> 並び替え(N→LR) 
         </label> 
         <label class="radio"> 
-          <input type="radio" name="raritySort" value="desc" /> レアリティ降順ソート(LR → N)
+          <input type="radio" name="raritySort" value="desc" /> 並び替え(LR→N)
         </label> 
         <label class="radio"> 
-          <input type="radio" name="raritySort" value="none" checked /> ソートなし 
+          <input type="radio" name="raritySort" value="none" class="radio_move" checked /> 並び替えなし 
         </label> 
       </div> 
     </details>
@@ -183,7 +182,7 @@
       </a>
       <button id="tweetButton">結果をツイートする</button>
     </div>
-    <div class="version-tag">v1.3.6</div>
+    <div class="version-tag">v1.4.0</div>
 
     
     <script type="module" src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>

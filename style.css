@@ -245,8 +245,9 @@ td .minus {
 
 .lineupNum {
   display: flex;   
-  text-align: left; 
-  margin-left: 50px;
+  width: fit-content;
+  margin: 0 auto;
+  margin-left: 40px;
   box-sizing: border-box;
   height: 75px;
   text-align: center;
@@ -271,7 +272,7 @@ td .minus {
   text-align: center;
   padding-bottom: 5px;
   margin-bottom: 5px;
-  margin-left: 20px;
+  margin-left: 5px;
 
 }
 .lineupNum .plus, .minus{
@@ -297,6 +298,14 @@ td .minus {
 .lineupNum .plus:hover {
   background: #8db6cf;
   color: #ffffff;
+}
+.lineupNum .showItems {
+  display: flex;
+  justify-content: flex-start;
+  text-align: center;
+  width: 200px;
+  font-size: 22px;
+  padding-left: 21px;
 }
 .rarityNum {
     display: flex;
@@ -328,7 +337,7 @@ td .minus {
 /* チェックボックス全体 */
 .checkbox {
   width: 650px;
-  margin-left: 50px;
+  margin-left: 40%;
   display: flex;
   grid-template-columns: auto 1fr; /* auto はアイコン、1fr はラベル文字列を想定 */
   gap: 10px;
@@ -337,7 +346,7 @@ td .minus {
   font-weight: normal;
   line-height: 1.5;
   color: #404040;
-  justify-content: flex-end;
+  margin-bottom: 5px;
 }
 
 .checkbox_icon {
@@ -351,7 +360,8 @@ td .minus {
   box-shadow: 0 0 0 0 transparent;
   transform: translate3d(0,8px,0);
   display: inline-block;
-  justify-self: flex-end;
+  margin-left: 18px;
+
   /* アイコン：選択済みの見た目 */
   &:checked {
     background: #8db6cf;
@@ -377,13 +387,30 @@ td .minus {
     opacity: 1;
   }
 }
-
+.checkbox_icon_No2 {
+  margin-left: 48px;
+}
 .radio {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 30px;
-  justify-content: flex-end;
+  width: 550px;
+  margin-left: 40%;
+  display: flex;
+  grid-template-columns: auto 1fr; 
+  gap: 10px;
+  padding: 5px;
+  font-size: 30px;
+  font-weight: normal;
+  line-height: 1.5;
+  color: #404040;
+} 
+.radioHistory {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 30px;
   width: 550px;
   margin-left: 140px;
   display: flex;
@@ -393,10 +420,9 @@ td .minus {
   font-size: 30px;
   font-weight: normal;
   line-height: 1.5;
+  color: #404040;
   justify-content: flex-end;
-    color: #404040;
 } 
-
 /* チェックされたラジオボタン内側のスタイル */
 input[type="radio"]::before {
   background-color: #80b6cf;
@@ -427,6 +453,9 @@ input[type="radio"] {
   position: relative;
   width: 20px;
   order: 2;
+}
+input[type="radio"].radio_move {
+  margin-left: 48px;
 }
 .lineupTable {
   margin-bottom: 20px;
@@ -508,6 +537,8 @@ details.terms .terms-content p {
   text-align: center;
 }
 .Topics .TopicsText li{
+  text-align: left;
+  margin-left: 20%;
   list-style: none !important;
 }
 .userName {
@@ -577,4 +608,7 @@ div.errorText {
   pointer-events: none;
   backdrop-filter: blur(4px);
   z-index: 2000;
+}
+.optionMargin {
+  margin-top: 10px;
 }

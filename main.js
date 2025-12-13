@@ -6,11 +6,12 @@ import {saveDataToLocalStorage, getDataFromLocalStorage} from "./DataSave/localS
 import {createTableHeader} from "./Create/createTableHeader.js";
 import {importZipFile, getResultItemsToFile} from "./DataSave/importZip.js";
 import {saveToIndexedDB, loadFromIndexedDB, clearAllIndexedDBData, showAllIndexedDBData, saveHistory, loadHistoryFromIndexedDB} from "./DataSave/indexedDB.js";
-import {getFormattedDate} from "./DataSave/formattedDate.js";
-import { createCsvURL, createTextURL} from "./Create/createURL.js";
+import {getFormattedDate} from "./Create/formattedDate.js";
+import { createCsvURL, createTextURL, createTweetURL} from "./Create/createURL.js";
 import { showNotification } from "./showNotification.js";
 import { buildHistoryToTextString, buildHistoryToCsvString} from "./DataSave/exportHistoryData.js";
 import { Xoshiro256ss } from "./Create/Xoshiro256ss.js";
+import { formatLineup } from "./Create/formattedLinenup.js";
 
 class MainData
 {
@@ -358,7 +359,7 @@ async function callMainAction(count) {
   //結果ツイート文生成
   const twitterTag = "#空のつーる";
   resultText += twitterTag; 
-  MainData.tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(resultText)}`;
+  MainData.tweetUrl = createTweetURL(resultText);
 
   updateHistory(resultLen, userName, name?.trim());
   
@@ -727,6 +728,17 @@ window.addEventListener("DOMContentLoaded", () => {
       input.value = input.value.slice(0, 10);
     }
   });
+
+  const showItems = document.getElementById("showItems");
+  showItems.addEventListener("click", () =>{
+    //ラインナップを取得、テキストに変換
+    const resultValue = formatLineup(MainData.itemLineupNum, MainData.resultItems);
+    //URL呼び出し
+    const url = createTweetURL(resultValue);
+    //新しいタブで開く
+    window.open(url, "_blank");
+  });
+
 
   // --- データ管理イベント ---
   const loadZipNameElement = document.getElementById("loadZipName");

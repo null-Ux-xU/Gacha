@@ -22,3 +22,8 @@ export function createCsvURL(text) {
     link.href = URL.createObjectURL(blob);
     link.download = "ガチャ履歴.csv"; // 保存するファイル名
 }
+
+export function createTweetURL(text) {
+    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+
+}
