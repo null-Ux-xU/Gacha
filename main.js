@@ -558,7 +558,7 @@ function showLineup() {
         }
       });
 
-      const newItemNum = Number(lines.length - startIndex); 
+      const newItemNum = Number(lines.length + startIndex); 
       document.getElementById("lineupNum").value = newItemNum;
       MainData.itemLineupNum = newItemNum;
       showLineup();
