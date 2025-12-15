@@ -558,23 +558,13 @@ function showLineup() {
         }
       });
 
+      const lineupNum = document.getElementById("lineupNum");
       const newItemNum = Number(lines.length + startIndex); 
-      document.getElementById("lineupNum").value = newItemNum;
-      MainData.itemLineupNum = newItemNum;
-      showLineup();
-      // const formArray = document.getElementsByClassName("editItemNameForm");
-      // formArray.slice(keyId).forEach((from, i) => {
-
-      // });
-      //開始位置から貼り付けを行う
-      //for文{
-      //MainData.resultItems[startArraykey].itemName = lines[0];
-      //}
-
-      //開始位置+lines.lengthにラインナップ数を変更
-
-
-      
+      if(lineupNum.value < newItemNum) {
+        lineupNum.value = newItemNum;
+        MainData.itemLineupNum = newItemNum;
+      }
+      showLineup();      
     });
 
     itemCell.addEventListener("change", e => {
