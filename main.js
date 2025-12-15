@@ -12,6 +12,7 @@ import { showNotification } from "./showNotification.js";
 import { buildHistoryToTextString, buildHistoryToCsvString} from "./DataSave/exportHistoryData.js";
 import { Xoshiro256ss } from "./Create/Xoshiro256ss.js";
 import { formatLineup } from "./Create/formattedLinenup.js";
+import { createItemNameArray } from "./Create/createItemNameArray.js";
 
 class MainData
 {
@@ -517,6 +518,7 @@ function showLineup() {
       inputType: "text",
       inputValue: itemData.itemName,
       ariaLabel: "上から" + (i + 1) + "番目にあるアイテム名入力欄",
+      className: "editItemNameForm"
     });
     
     MainData.resultItems[arraykey] = {
@@ -524,7 +526,57 @@ function showLineup() {
       rarity: itemData.rarity      
     };
 
+
+
+
+
     //名前入力欄に変更があったら登録
+
+    itemCell.addEventListener("paste", (e)=> {
+      //デフォルトの処理を停止
+      e.preventDefault();
+      //一行ずつのテキストに変換
+      const lines = createItemNameArray(e.clipboardData.getData("text"));
+
+      //貼り付けられた位置を取得
+      const keyTemplate = "indexNo.";
+      const startArraykey = row.id;
+      console.log(startArraykey);
+      const startIndex = Number(startArraykey.replace(keyTemplate,""));
+      console.log(startIndex);
+      
+
+      lines.forEach((line, i) => {
+        if (MainData.resultItems[keyTemplate + String(startIndex + i)]) {
+          MainData.resultItems[keyTemplate + String(startIndex + i)].itemName = line;
+        }
+        else {
+          MainData.resultItems[keyTemplate + String(startIndex + i)] = {
+            itemName: line,
+            rarity: itemData.rarity
+          };
+        }
+      });
+
+      const newItemNum = Number(lines.length - startIndex); 
+      document.getElementById("lineupNum").value = newItemNum;
+      MainData.itemLineupNum = newItemNum;
+      showLineup();
+      // const formArray = document.getElementsByClassName("editItemNameForm");
+      // formArray.slice(keyId).forEach((from, i) => {
+
+      // });
+      //開始位置から貼り付けを行う
+      //for文{
+      //MainData.resultItems[startArraykey].itemName = lines[0];
+      //}
+
+      //開始位置+lines.lengthにラインナップ数を変更
+
+
+      
+    });
+
     itemCell.addEventListener("change", e => {
       //入力欄の番号取得
       const arraykey = row.id;
@@ -570,6 +622,7 @@ function showLineup() {
   }
 
   table.appendChild(tbody);
+
 }
 
 /**
@@ -741,6 +794,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
   // --- データ管理イベント ---
+
+
+
+
   const loadZipNameElement = document.getElementById("loadZipName");
 
   //新規ファイルのインポート

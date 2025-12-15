@@ -8,11 +8,12 @@
  * @param {string} params.inputType inputのtype
  * @param {object} params.inputValue 初期値
  * @param {string} params.ariaLabel 補助テキスト
- * @param {string}  params.divWrapperName HTML装飾用className
+ * @param {string} params.divWrapperName HTML装飾用className
  * @param {number} params.step ナンバーのstep数
+ * @param {String} params.className クラス名
  * @returns  ```<td> <input> </td>``` || null 
  */
-export function createTableElement({elementId, elementName, inputType, inputValue, ariaLabel, divWrapperName = null, step = "1"}) {
+export function createTableElement({elementId, elementName, inputType, inputValue, ariaLabel, divWrapperName = null, step = "1", className = ""}) {
     const tdElement = document.createElement("td"); //td作成
     const input = document.createElement("input");  //input作成
     const frag = document.createDocumentFragment(); //DOMアクセスを減らせるらしい
@@ -22,6 +23,7 @@ export function createTableElement({elementId, elementName, inputType, inputValu
     input.type = inputType;                     //type指定
     input.value = inputValue;                   //vaue指定
     input.ariaLabel = ariaLabel;                //補助テキスト
+    input.className = className;                //クラス名
 
     //ネストを深くしたくない
     let wrapper = input;
