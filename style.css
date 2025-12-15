@@ -72,7 +72,7 @@ select option {
 
 /*デバッグボタンの非表示*/
 .debug{
-  /* display: none; */
+  display: none;
 }
 
 button,
