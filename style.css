@@ -311,6 +311,7 @@ td .minus {
     text-align: left;
     margin-top: 35px;
     margin-left: 50px;
+    margin-bottom: 20px;
     box-sizing: border-box;
     height: 60px;
 }
@@ -338,7 +339,6 @@ td .minus {
   width: 650px;
   margin-left: 40%;
   display: flex;
-  grid-template-columns: auto 1fr; /* auto はアイコン、1fr はラベル文字列を想定 */
   gap: 10px;
   padding: 5px;
   font-size: 30px;
@@ -616,4 +616,14 @@ div.errorText {
 }
 .optionMargin {
   margin-top: 10px;
+}
+
+.showRarity {
+  display: inline-flex;
+  justify-content: center;
+  text-align: center;
+  width: 300px;
+  height: 65px;
+  font-size: 25px;
+  transform: translate3d(0,-8px,0);
 }

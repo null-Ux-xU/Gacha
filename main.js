@@ -13,6 +13,7 @@ import { buildHistoryToTextString, buildHistoryToCsvString} from "./DataSave/exp
 import { Xoshiro256ss } from "./Create/Xoshiro256ss.js";
 import { formatLineup } from "./Create/formattedLinenup.js";
 import { createItemNameArray } from "./Create/createItemNameArray.js";
+import { formattedRarity } from "./Create/formattedRarity.js";
 
 class MainData
 {
@@ -756,6 +757,27 @@ async function activeHistoryURL() {
   };
 }
 
+/**
+ * 任意の文字列をクリップボードにコピー
+ * 
+ * @param {string} text 
+ * @returns 
+ */
+async function setTextToClipboard(text) {
+  if (!navigator.clipboard) {
+      await showNotification("このブラウザは対応していません...", "error", 1500);
+      return;
+    }
+
+    navigator.clipboard.writeText(text).then(
+    async () => {
+      await showNotification("クリップボードにコピーしました。", "success", 1500);
+    },
+    async () => {
+      await showNotification("コピーに失敗しました。", "error", 1500);
+    });
+}
+
 // イベント登録
 window.addEventListener("DOMContentLoaded", () => {
   // --- 初期化処理 ---
@@ -772,33 +794,37 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  //一覧のツイート機能
-  const showItems = document.getElementById("showItems");
-  showItems.addEventListener("click", async() =>{
+  //コピー
+  const name = MainData.gachaName.get(MainData.onLoadedDatakey) ?? document.getElementById("gachaName").value;
+  
+  //一覧のコピー
+  document.getElementById("showItems").addEventListener("click", async() =>{
     //ラインナップを取得、テキストに変換
-    const name = MainData.gachaName.get(MainData.onLoadedDatakey) ?? document.getElementById("gachaName").value;
     const resultValue = formatLineup(name.trim() || "ガチャ名なし", MainData.itemLineupNum, MainData.resultItems);
-
-    if (!navigator.clipboard) {
-      await showNotification("このブラウザは対応していません...", "error", 1500);
-      return;
-    }
-
-    navigator.clipboard.writeText(resultValue).then(
-    async () => {
-      await showNotification("クリップボードにコピーしました。", "success", 1500);
-    },
-    async () => {
-      await showNotification("コピーに失敗しました。", "error", 1500);
-    });
+    //クリップボードにコピー
+    await setTextToClipboard(resultValue);
   });
 
+  //レアリティのコピー
+  document.getElementById("showRarity").addEventListener("click", async() =>{
+    const rarityArray = []; //関数用の配列
+
+    //レアリティの取り出し
+    MainData.rarityTable.slice(0, MainData.rarityNum).map(r => {
+      const rarityValue = parseFloat(document.getElementById(r + "-Probability").value); 
+      rarityArray.push({ 
+        name: MainData.rarityDisplayNames[r], 
+        value: rarityValue
+      });
+    });
+    //テキストに変換
+    const resultValue = formattedRarity(name.trim() || "ガチャ名なし", MainData.rarityNum, rarityArray);
+
+    //クリップボードにコピー
+    await setTextToClipboard(resultValue);
+  });
 
   // --- データ管理イベント ---
-
-
-
-
   const loadZipNameElement = document.getElementById("loadZipName");
 
   //新規ファイルのインポート
