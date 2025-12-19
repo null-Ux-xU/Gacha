@@ -772,14 +772,25 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  //一覧のツイート機能
   const showItems = document.getElementById("showItems");
-  showItems.addEventListener("click", () =>{
+  showItems.addEventListener("click", async() =>{
     //ラインナップを取得、テキストに変換
-    const resultValue = formatLineup(MainData.itemLineupNum, MainData.resultItems);
-    //URL呼び出し
-    const url = createTweetURL(resultValue);
-    //新しいタブで開く
-    window.open(url, "_blank");
+    const name = MainData.gachaName.get(MainData.onLoadedDatakey) ?? document.getElementById("gachaName").value;
+    const resultValue = formatLineup(name.trim() || "ガチャ名なし", MainData.itemLineupNum, MainData.resultItems);
+
+    if (!navigator.clipboard) {
+      await showNotification("このブラウザは対応していません...", "error", 1500);
+      return;
+    }
+
+    navigator.clipboard.writeText(resultValue).then(
+    async () => {
+      await showNotification("クリップボードにコピーしました。", "success", 1500);
+    },
+    async () => {
+      await showNotification("コピーに失敗しました。", "error", 1500);
+    });
   });
 
 
