@@ -339,6 +339,7 @@ td .minus {
   width: 650px;
   margin-left: 40%;
   display: flex;
+  grid-template-columns: 660px 1fr; /* auto はアイコン、1fr はラベル文字列を想定 */
   gap: 10px;
   padding: 5px;
   font-size: 30px;
@@ -625,5 +626,5 @@ div.errorText {
   width: 300px;
   height: 65px;
   font-size: 25px;
-  transform: translate3d(0,-8px,0);
+  transform: translate3d(15px,-8px,0);
 }
