@@ -83,6 +83,7 @@ button,
   cursor: pointer;
   border-radius: 20px;
   margin: 6px;
+  margin-top: 15px;
   border: 2px solid #8db6cf;
   color: #8db6cf;
   background: #ffffff;
@@ -627,4 +628,12 @@ div.errorText {
   height: 65px;
   font-size: 25px;
   transform: translate3d(15px,-8px,0);
+}
+
+details {
+  margin-top: 20px;
+}
+
+.downloadTypeGroup {
+  margin-top: 10px;
 }
