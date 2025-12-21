@@ -4,11 +4,13 @@
  * @param {Object[]} items -アイテムの一覧
  * @returns 
  */
-export function formatLineup (num, items) {
-    let msg = `全${num}種類\n`;
+export function formatLineup (gachaName, num, items) {
 
+    let msg = `${gachaName}\n全${num}種類\n`;
+
+    console.log(items);
     Object.entries(items).slice(0, num).forEach(([indexKey, itemObj]) => {
-        const name = itemObj.itemName || "はずれ";
+        const name = itemObj.name || "はずれ";
         const rarity = itemObj.rarity || "";
         msg += `${rarity}：${name}\n`;
     });
