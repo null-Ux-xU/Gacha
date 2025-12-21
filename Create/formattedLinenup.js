@@ -10,7 +10,7 @@ export function formatLineup (gachaName, num, items) {
 
     console.log(items);
     Object.entries(items).slice(0, num).forEach(([indexKey, itemObj]) => {
-        const name = itemObj.name || "はずれ";
+        const name = itemObj.itemName || "はずれ";
         const rarity = itemObj.rarity || "";
         msg += `${rarity}：${name}\n`;
     });
